@@ -29,7 +29,11 @@ def pytest_configure(config):
 
 def pytest_runtest_logreport(report):
 
-    if report.when != "call":
+    if report.when not in (
+        "setup",
+        "call",
+        "teardown"
+    ):
         return
 
 
@@ -44,6 +48,7 @@ def pytest_runtest_logreport(report):
         file.write(
             "\n"
             f"TEST: {report.nodeid}\n"
+            f"PHASE: {report.when}\n"
             f"STATUS: {status}\n"
             "\n"
         )
@@ -59,6 +64,7 @@ def pytest_runtest_logreport(report):
             file.write(
                 "\n"
                 f"TEST: {report.nodeid}\n"
+                f"PHASE: {report.when}\n"
                 f"STATUS: FAILED\n"
                 "\n"
             )
@@ -71,3 +77,29 @@ def pytest_runtest_logreport(report):
                 file.write(
                     "\n\n"
                 )
+
+
+def pytest_collectreport(report):
+
+    if not report.failed:
+        return
+
+
+    with ERROR_LOG_FILE.open(
+        "a",
+        encoding="utf-8"
+    ) as file:
+
+        file.write(
+            "\n"
+            "COLLECTION ERROR\n"
+            "\n"
+        )
+
+        file.write(
+            str(report.longrepr)
+        )
+
+        file.write(
+            "\n\n"
+        )

@@ -1,74 +1,17 @@
-TEST RUN STARTED: 2026-07-31 11:15:08.491149
+TEST RUN STARTED: 2026-07-31 12:01:07.453656
 
 
-TEST: tests/test_context_builder.py::test_context_builder_creates_request_context
+TEST: tests/test_core_llm_pipeline.py::test_core_pipeline_uses_llm_handler
+PHASE: setup
 STATUS: PASSED
 
 
-TEST: tests/test_context_builder.py::test_context_builder_preserves_conversation_state
+TEST: tests/test_core_llm_pipeline.py::test_core_pipeline_uses_llm_handler
+PHASE: call
 STATUS: PASSED
 
 
-TEST: tests/test_conversation_state.py::test_state_manager_updates_active_task
-STATUS: PASSED
-
-
-TEST: tests/test_conversation_state.py::test_state_manager_validates_mode_transition
-STATUS: PASSED
-
-
-TEST: tests/test_conversation_state.py::test_state_contains_pending_transition
-STATUS: PASSED
-
-
-TEST: tests/test_conversation_state.py::test_state_manager_requests_transition
-STATUS: PASSED
-
-
-TEST: tests/test_conversation_state.py::test_state_manager_confirms_transition
-STATUS: PASSED
-
-
-TEST: tests/test_conversation_state.py::test_state_manager_rejects_transition
-STATUS: PASSED
-
-
-TEST: tests/test_conversation_state.py::test_state_manager_requests_mode_change_from_update
-STATUS: PASSED
-
-
-TEST: tests/test_core_engine.py::test_core_routes_chitchat
-STATUS: PASSED
-
-
-TEST: tests/test_core_engine.py::test_core_routes_planner
-STATUS: PASSED
-
-
-TEST: tests/test_core_engine.py::test_core_handles_handler_error
-STATUS: PASSED
-
-
-TEST: tests/test_core_engine.py::test_core_returns_state_updates
-STATUS: PASSED
-
-
-TEST: tests/test_core_engine.py::test_core_processes_state_updates
-STATUS: PASSED
-
-
-TEST: tests/test_core_engine.py::test_core_routes_pending_confirmation
-STATUS: PASSED
-
-
-TEST: tests/test_core_engine.py::test_core_handles_invalid_handler_result
-STATUS: PASSED
-
-
-TEST: tests/test_core_pipeline.py::test_request_flows_through_core_pipeline
-STATUS: PASSED
-
-
-TEST: tests/test_handlers.py::test_confirmation_handler_accepts
+TEST: tests/test_core_llm_pipeline.py::test_core_pipeline_uses_llm_handler
+PHASE: teardown
 STATUS: PASSED
 
