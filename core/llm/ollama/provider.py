@@ -1,9 +1,9 @@
-from .models import (
+from ..models import (
     LLMRequest,
     LLMResponse
 )
 
-from .provider import LLMProvider
+from ..provider import LLMProvider
 from core.llm.config import LLMConfig
 from core.config.llm import (
     OLLAMA_MODEL,

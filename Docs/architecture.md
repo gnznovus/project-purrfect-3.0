@@ -372,7 +372,89 @@ Communication happens through:
 - RequestContext
 - CoreResult
 - StateUpdate
+- LLMRequest
+- LLMResponse
 
 ## Replaceable Components
 
 Handlers and processors can evolve without rewriting CoreEngine.
+
+## LLMService
+
+Responsibility:
+
+Coordinate all Large Language Model interactions.
+
+It owns:
+
+- building LLM requests
+- calling providers
+- returning structured responses
+
+It does not:
+
+- know which model implementation is used
+- perform application orchestration
+- modify conversation state
+
+## LLMProvider
+
+Responsibility:
+
+Provide a provider-specific implementation for language model execution.
+
+Current implementations:
+
+- FakeLLMProvider
+- OllamaProvider
+
+Future providers may include:
+
+- OpenAI
+- Anthropic
+- Local models
+
+The provider returns a standardized `LLMResponse`.
+
+## LLMRequest / LLMResponse
+
+Responsibility:
+
+Provide a stable contract between application logic and language model providers.
+
+These models isolate provider-specific APIs from the rest of the system.
+
+# Dependency Direction
+
+Dependencies flow inward.
+
+```
+CoreEngine
+    |
+    v
+Handler
+    |
+    v
+LLMService
+    |
+    v
+LLMProvider
+```
+
+Lower layers never depend on higher layers.
+
+For example:
+
+- CoreEngine does not know about Ollama.
+- Handlers do not know provider implementations.
+- Providers do not know CoreResult or ConversationState.
+
+## Replaceable Implementations
+
+Handlers, providers, and processors can be replaced without rewriting CoreEngine.
+
+Examples:
+
+- FakeLLMProvider ↔ OllamaProvider
+- Future OpenAIProvider
+- Different handler implementations

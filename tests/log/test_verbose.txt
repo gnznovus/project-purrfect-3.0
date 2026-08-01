@@ -1,17 +1,26 @@
-TEST RUN STARTED: 2026-07-31 12:01:07.453656
+================================
+PURRFECT TEST RUN
+================================
+STARTED: 2026-08-01 09:02:12.050460
 
 
-TEST: tests/test_core_llm_pipeline.py::test_core_pipeline_uses_llm_handler
+------------------------------
+TEST: tests/test_reception_intent_planner_pipeline.py::test_reception_intent_planner_pipeline_with_trace
 PHASE: setup
 STATUS: PASSED
+DURATION: 0.001s
+------------------------------
 
-
-TEST: tests/test_core_llm_pipeline.py::test_core_pipeline_uses_llm_handler
+------------------------------
+TEST: tests/test_reception_intent_planner_pipeline.py::test_reception_intent_planner_pipeline_with_trace
 PHASE: call
 STATUS: PASSED
+DURATION: 0.001s
+------------------------------
 
-
-TEST: tests/test_core_llm_pipeline.py::test_core_pipeline_uses_llm_handler
+------------------------------
+TEST: tests/test_reception_intent_planner_pipeline.py::test_reception_intent_planner_pipeline_with_trace
 PHASE: teardown
 STATUS: PASSED
-
+DURATION: 0.001s
+------------------------------

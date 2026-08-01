@@ -5,24 +5,44 @@ from datetime import datetime
 LOG_DIR = Path(__file__).parent / "log"
 
 VERBOSE_LOG_FILE = LOG_DIR / "test_verbose.txt"
+TRACE_LOG_FILE = LOG_DIR / "test_trace.txt"
 ERROR_LOG_FILE = LOG_DIR / "err.txt"
 
 
+TEST_RUN_TIME = None
+
+
 def pytest_configure(config):
+
+    global TEST_RUN_TIME
 
     LOG_DIR.mkdir(
         exist_ok=True
     )
 
-    now = datetime.now()
+    TEST_RUN_TIME = datetime.now()
 
     VERBOSE_LOG_FILE.write_text(
-        f"TEST RUN STARTED: {now}\n\n",
+        "================================\n"
+        "PURRFECT TEST RUN\n"
+        "================================\n"
+        f"STARTED: {TEST_RUN_TIME}\n\n",
+        encoding="utf-8"
+    )
+
+    TRACE_LOG_FILE.write_text(
+        "================================\n"
+        "PURRFECT TEST TRACE\n"
+        "================================\n"
+        f"STARTED: {TEST_RUN_TIME}\n\n",
         encoding="utf-8"
     )
 
     ERROR_LOG_FILE.write_text(
-        f"TEST ERROR LOG STARTED: {now}\n\n",
+        "================================\n"
+        "TEST ERROR LOG\n"
+        "================================\n"
+        f"STARTED: {TEST_RUN_TIME}\n\n",
         encoding="utf-8"
     )
 
@@ -37,7 +57,11 @@ def pytest_runtest_logreport(report):
         return
 
 
-    status = "PASSED" if report.passed else "FAILED"
+    status = (
+        "PASSED"
+        if report.passed
+        else "FAILED"
+    )
 
 
     with VERBOSE_LOG_FILE.open(
@@ -47,10 +71,12 @@ def pytest_runtest_logreport(report):
 
         file.write(
             "\n"
+            "------------------------------\n"
             f"TEST: {report.nodeid}\n"
             f"PHASE: {report.when}\n"
             f"STATUS: {status}\n"
-            "\n"
+            f"DURATION: {report.duration:.3f}s\n"
+            "------------------------------\n"
         )
 
 
@@ -63,9 +89,12 @@ def pytest_runtest_logreport(report):
 
             file.write(
                 "\n"
+                "------------------------------\n"
                 f"TEST: {report.nodeid}\n"
                 f"PHASE: {report.when}\n"
-                f"STATUS: FAILED\n"
+                "STATUS: FAILED\n"
+                f"DURATION: {report.duration:.3f}s\n"
+                "------------------------------\n"
                 "\n"
             )
 
@@ -92,8 +121,9 @@ def pytest_collectreport(report):
 
         file.write(
             "\n"
+            "================================\n"
             "COLLECTION ERROR\n"
-            "\n"
+            "================================\n\n"
         )
 
         file.write(

@@ -1,6 +1,6 @@
 import pytest
 
-from core.llm.ollama import OllamaProvider
+from core.llm.ollama.provider import OllamaProvider
 from core.llm.models import LLMRequest
 from core.llm.config import LLMConfig
 
