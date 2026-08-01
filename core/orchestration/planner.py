@@ -6,6 +6,14 @@ from core.orchestration.models import (
 
 class PlannerAgent:
 
+    def __init__(
+        self,
+        registry
+    ):
+
+        self.registry = registry
+
+
     async def create_plan(
         self,
         request_package
@@ -16,9 +24,23 @@ class PlannerAgent:
 
         for intent in request_package.intent_set.intents:
 
+            agents = self.registry.find_by_task(
+                intent.type
+            )
+
+
+            if not agents:
+                continue
+
+
+            selected_agent = agents[0]
+
+
             plan.steps.append(
                 PlanStep(
-                    capability="calendar",
+                    capability=(
+                        selected_agent.metadata.domain
+                    ),
                     action=intent.type,
                     parameters=intent.entities
                 )

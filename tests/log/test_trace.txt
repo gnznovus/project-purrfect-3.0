@@ -1,58 +1,35 @@
 ================================
 PURRFECT TEST TRACE
 ================================
-STARTED: 2026-08-01 09:02:12.050460
+STARTED: 2026-08-01 10:00:16.790933
 
 
 ================================
-RECEPTION PIPELINE
-TIME: 2026-08-01 09:02:12.077763
+EXECUTION PIPELINE
+TIME: 2026-08-01 10:00:16.814221
 ================================
 
-[USER REQUEST]
-message: create a calendar event tomorrow, check the weather, and plan a trip
-
-[RECEPTION RESULT]
-mode: planner
-requires_confirmation: True
-reason: complex task detected
-context: {'user_message': 'create a calendar event tomorrow, check the weather, and plan a trip'}
-
-
-================================
-INTENT PIPELINE
-TIME: 2026-08-01 09:02:12.078167
-================================
-
-[INTENT RESULT]
-intents: [{'type': 'create_event', 'confidence': 1.0}, {'type': 'get_weather', 'confidence': 0.95}, {'type': 'plan_trip', 'confidence': 0.9}]
-metadata: {}
-
-
-================================
-PLANNER PIPELINE
-TIME: 2026-08-01 09:02:12.078346
-================================
-
-[PLANNER INPUT]
-intents: [{'type': 'create_event', 'confidence': 1.0}, {'type': 'get_weather', 'confidence': 0.95}, {'type': 'plan_trip', 'confidence': 0.9}]
-metadata: {}
-
-[PLAN CREATED]
+[EXECUTION PLAN]
 steps: 3
 
-[STEP #1]
-capability: calendar
-action: create_event
-parameters: {}
 
-[STEP #2]
-capability: calendar
-action: get_weather
-parameters: {}
+================================
+EXECUTION RESULT
+TIME: 2026-08-01 10:00:16.814459
+================================
 
-[STEP #3]
-capability: calendar
-action: plan_trip
-parameters: {}
+[RESULT #1]
+domain: calendar
+result: create_event completed
+confidence: 1.0
+
+[RESULT #2]
+domain: weather
+result: sunny
+confidence: 1.0
+
+[RESULT #3]
+domain: travel
+result: trip planned
+confidence: 1.0
 

@@ -1,38 +1,16 @@
 from core.agents.registry import AgentRegistry
-from core.agents.models import AgentMetadata
-from core.agents.base import SpecializedAgent
 
+from core.agents.specialized.calendar import (
+    CalendarAgent
+)
 
-class FakeCalendarAgent(
-    SpecializedAgent
-):
+from core.agents.specialized.weather import (
+    WeatherAgent
+)
 
-    metadata = AgentMetadata(
-        name="calendar",
-        version="1.0",
-        domain="calendar",
-        description="Calendar specialist",
-
-        supported_tasks=[
-            "create_event"
-        ]
-    )
-
-
-class FakeWeatherAgent(
-    SpecializedAgent
-):
-
-    metadata = AgentMetadata(
-        name="weather",
-        version="1.0",
-        domain="weather",
-        description="Weather specialist",
-
-        supported_tasks=[
-            "get_weather"
-        ]
-    )
+from core.agents.specialized.travel import (
+    TravelAgent
+)
 
 
 def test_registry_discovers_agent_by_task():
@@ -41,11 +19,11 @@ def test_registry_discovers_agent_by_task():
 
 
     registry.register(
-        FakeCalendarAgent()
+        CalendarAgent()
     )
 
     registry.register(
-        FakeWeatherAgent()
+        WeatherAgent()
     )
 
 
@@ -56,4 +34,41 @@ def test_registry_discovers_agent_by_task():
 
     assert len(agents) == 1
 
-    assert agents[0].metadata.name == "calendar"
+    assert (
+        agents[0].metadata.name
+        == "calendar"
+    )
+
+    assert (
+        "create_event"
+        in agents[0].metadata.supported_tasks
+    )
+
+def test_registry_discovers_multiple_domains():
+
+    registry = AgentRegistry()
+
+    registry.register(
+        CalendarAgent()
+    )
+
+    registry.register(
+        WeatherAgent()
+    )
+
+    registry.register(
+        TravelAgent()
+    )
+
+
+    weather_agents = registry.find_by_task(
+        "get_weather"
+    )
+
+
+    assert len(weather_agents) == 1
+
+    assert (
+        weather_agents[0].metadata.domain
+        == "weather"
+    )

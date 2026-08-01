@@ -1,16 +1,26 @@
 import pytest
 
-from core.orchestration.reception import ReceptionAgent
+from core.agents.registry import AgentRegistry
+
+from core.agents.specialized.calendar import CalendarAgent
+from core.agents.specialized.weather import WeatherAgent
+from core.agents.specialized.travel import TravelAgent
+
+
+from core.intent.models import (
+    Intent,
+    IntentSet
+)
 
 from core.intent.secretary import IntentSecretary
 
-from core.orchestration.planner import PlannerAgent
-
-from core.intent.models import Intent, IntentSet
 
 from core.orchestration.models import (
     ExecutionPlan
 )
+
+from core.orchestration.planner import PlannerAgent
+from core.orchestration.reception import ReceptionAgent
 
 from utils.trace import (
     write_section,
@@ -151,7 +161,25 @@ async def test_reception_intent_planner_pipeline_with_trace():
     )
 
 
-    planner = PlannerAgent()
+    registry = AgentRegistry()
+
+
+    registry.register(
+        CalendarAgent()
+    )
+
+    registry.register(
+        WeatherAgent()
+    )
+
+    registry.register(
+        TravelAgent()
+    )
+
+
+    planner = PlannerAgent(
+        registry
+    )
 
 
     write_trace(
@@ -197,8 +225,14 @@ async def test_reception_intent_planner_pipeline_with_trace():
 
     assert len(plan.steps) == 3
 
+    assert plan.steps[0].capability == "calendar"
+
     assert plan.steps[0].action == "create_event"
 
+    assert plan.steps[1].capability == "weather"
+
     assert plan.steps[1].action == "get_weather"
+
+    assert plan.steps[2].capability == "travel"
 
     assert plan.steps[2].action == "plan_trip"

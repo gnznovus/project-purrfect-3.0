@@ -1,45 +1,19 @@
 import pytest
 
-from core.agents.base import SpecializedAgent
-
 from core.agents.models import (
-    AgentMetadata,
     AgentRequest,
     AgentResult
 )
 
-
-class FakeCalendarAgent(
-    SpecializedAgent
-):
-
-    metadata = AgentMetadata(
-        name="calendar",
-        version="1.0",
-        domain="calendar",
-        description="Calendar specialist",
-        supported_tasks=[
-            "create_event"
-        ]
-    )
-
-
-    async def process(
-        self,
-        request: AgentRequest
-    ):
-
-        return AgentResult(
-            domain=self.metadata.domain,
-            result="event created",
-            confidence=1.0
-        )
+from core.agents.specialized.calendar import (
+    CalendarAgent
+)
 
 
 @pytest.mark.asyncio
 async def test_specialized_agent_processes_request():
 
-    agent = FakeCalendarAgent()
+    agent = CalendarAgent()
 
 
     request = AgentRequest(
@@ -62,6 +36,6 @@ async def test_specialized_agent_processes_request():
 
     assert result.domain == "calendar"
 
-    assert result.result == "event created"
+    assert result.result == "calendar action completed"
 
     assert result.confidence == 1.0

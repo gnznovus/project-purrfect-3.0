@@ -4,11 +4,11 @@ from core.agents.registry import AgentRegistry
 
 from core.agents.models import AgentRequest
 
-from tests.fakes.agents import (
-    FakeCalendarAgent,
-    FakeWeatherAgent,
-    FakeTravelAgent
-)
+from core.agents.specialized.calendar import CalendarAgent
+
+from core.agents.specialized.weather import WeatherAgent
+
+from core.agents.specialized.travel import TravelAgent
 
 from utils.trace import (
     write_section,
@@ -38,9 +38,9 @@ async def test_agent_pipeline_with_trace():
 
 
     agents = [
-        FakeCalendarAgent(),
-        FakeWeatherAgent(),
-        FakeTravelAgent()
+        CalendarAgent(),
+        WeatherAgent(),
+        TravelAgent()
     ]
 
 
@@ -135,4 +135,4 @@ async def test_agent_pipeline_with_trace():
 
     assert result.domain == "calendar"
 
-    assert result.result == "event created"
+    assert result.result == "calendar action completed"
