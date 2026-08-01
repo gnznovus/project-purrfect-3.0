@@ -1,26 +1,30 @@
 ================================
 PURRFECT TEST TRACE
 ================================
-STARTED: 2026-08-01 10:18:46.793027
+STARTED: 2026-08-01 10:34:11.177808
 
 
 ================================
-EXECUTION FAILURE PIPELINE
-TIME: 2026-08-01 10:18:46.820499
+FULL PIPELINE
+TIME: 2026-08-01 10:34:11.205686
 ================================
 
-[STEP #1]
-action: create_event
-status: completed
-error: None
+[USER REQUEST]
+message: create a calendar event tomorrow, check the weather, and plan a trip
 
-[STEP #2]
-action: get_weather
-status: failed
-error: weather service unavailable
+[RECEPTION]
+mode: planner
 
-[STEP #3]
-action: plan_trip
-status: completed
-error: None
+[INTENTS]
+count: 3
+
+[PLAN]
+steps: 3
+
+[EXECUTION]
+completed: ['create_event', 'get_weather', 'plan_trip']
+
+[FINAL RESPONSE]
+success: True
+results: [{'action': 'create_event', 'status': 'completed', 'result': 'create_event completed'}, {'action': 'get_weather', 'status': 'completed', 'result': 'sunny'}, {'action': 'plan_trip', 'status': 'completed', 'result': 'trip planned'}]
 
