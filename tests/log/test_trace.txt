@@ -1,35 +1,26 @@
 ================================
 PURRFECT TEST TRACE
 ================================
-STARTED: 2026-08-01 10:00:16.790933
+STARTED: 2026-08-01 10:18:46.793027
 
 
 ================================
-EXECUTION PIPELINE
-TIME: 2026-08-01 10:00:16.814221
+EXECUTION FAILURE PIPELINE
+TIME: 2026-08-01 10:18:46.820499
 ================================
 
-[EXECUTION PLAN]
-steps: 3
+[STEP #1]
+action: create_event
+status: completed
+error: None
 
+[STEP #2]
+action: get_weather
+status: failed
+error: weather service unavailable
 
-================================
-EXECUTION RESULT
-TIME: 2026-08-01 10:00:16.814459
-================================
-
-[RESULT #1]
-domain: calendar
-result: create_event completed
-confidence: 1.0
-
-[RESULT #2]
-domain: weather
-result: sunny
-confidence: 1.0
-
-[RESULT #3]
-domain: travel
-result: trip planned
-confidence: 1.0
+[STEP #3]
+action: plan_trip
+status: completed
+error: None
 

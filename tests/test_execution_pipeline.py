@@ -31,14 +31,20 @@ from utils.trace import (
 )
 
 
-def trace_result(
-    result
+def trace_step(
+    step
 ):
 
     return {
-        "domain": result.domain,
-        "result": result.result,
-        "confidence": result.confidence
+        "capability": step.capability,
+        "action": step.action,
+        "status": step.status,
+        "result": (
+            step.result.result
+            if step.result
+            else None
+        ),
+        "error": step.error
     }
 
 
@@ -114,29 +120,57 @@ async def test_execution_pipeline_with_trace():
     )
 
 
-    results = await engine.execute(
+    executed_plan = await engine.execute(
         plan
     )
 
 
-    for index, result in enumerate(
-        results,
+    for index, step in enumerate(
+        executed_plan.steps,
         start=1
     ):
 
         write_trace(
-            f"RESULT #{index}",
-            trace_result(
-                result
+            f"STEP #{index}",
+            trace_step(
+                step
             )
         )
 
 
-    assert len(results) == 3
+    assert len(
+        executed_plan.steps
+    ) == 3
 
 
-    assert results[0].domain == "calendar"
+    assert (
+        executed_plan.steps[0].status
+        == "completed"
+    )
 
-    assert results[1].domain == "weather"
+    assert (
+        executed_plan.steps[0].result.domain
+        == "calendar"
+    )
 
-    assert results[2].domain == "travel"
+
+    assert (
+        executed_plan.steps[1].status
+        == "completed"
+    )
+
+    assert (
+        executed_plan.steps[1].result.domain
+        == "weather"
+    )
+
+
+    assert (
+        executed_plan.steps[2].status
+        == "completed"
+    )
+
+    assert (
+        executed_plan.steps[2].result.domain
+        == "travel"
+    )

@@ -3,8 +3,7 @@ from core.orchestration.models import (
 )
 
 from core.agents.models import (
-    AgentRequest,
-    AgentResult
+    AgentRequest
 )
 
 
@@ -20,12 +19,13 @@ class ExecutionEngine:
     async def execute(
         self,
         plan: ExecutionPlan
-    ) -> list[AgentResult]:
-
-        results = []
+    ) -> ExecutionPlan:
 
 
         for step in plan.steps:
+
+            step.status = "running"
+
 
             agents = self.registry.find_by_task(
                 step.action
@@ -33,23 +33,39 @@ class ExecutionEngine:
 
 
             if not agents:
+
+                step.status = "failed"
+
+                step.error = (
+                    "no agent found"
+                )
+
                 continue
 
 
             agent = agents[0]
 
 
-            result = await agent.process(
-                AgentRequest(
-                    task=step.action,
-                    context=step.parameters
+            try:
+
+                result = await agent.process(
+                    AgentRequest(
+                        task=step.action,
+                        context=step.parameters
+                    )
                 )
-            )
 
 
-            results.append(
-                result
-            )
+                step.status = "completed"
+
+                step.result = result
 
 
-        return results
+            except Exception as error:
+
+                step.status = "failed"
+
+                step.error = str(error)
+
+
+        return plan

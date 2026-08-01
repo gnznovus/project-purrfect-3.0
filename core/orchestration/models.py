@@ -12,6 +12,12 @@ class PlanStep:
         default_factory=dict
     )
 
+    status: str = "pending"
+
+    result: object | None = None
+
+    error: str | None = None
+
 
 @dataclass
 class ExecutionPlan:
@@ -19,9 +25,6 @@ class ExecutionPlan:
     steps: list[PlanStep] = field(
         default_factory=list
     )
-
-from dataclasses import dataclass
-
 
 @dataclass
 class ReceptionResult:
