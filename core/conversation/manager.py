@@ -49,6 +49,12 @@ class ConversationStateManager:
                     None
                 )
 
+            elif update.type == StateUpdateType.CONFIRM_PENDING_ACTION:
+                self.confirm_pending_transition()
+
+            elif update.type == StateUpdateType.REJECT_PENDING_ACTION:
+                self.reject_pending_transition()
+
 
     def switch_mode(
         self,
@@ -93,12 +99,14 @@ class ConversationStateManager:
     def request_transition(
         self,
         target_mode: ConversationMode,
-        reason: str
+        reason: str,
+        original_message: str | None = None
     ):
         self.state.pending_transition = PendingTransition(
             from_mode=self.state.mode,
             target_mode=target_mode,
-            reason=reason
+            reason=reason,
+            original_message=original_message
         )
 
 

@@ -1,74 +1,80 @@
-from core.agents.registry import AgentRegistry
-
-from core.agents.specialized.calendar import (
-    CalendarAgent
+from core.agents.discovery import (
+    AgentDiscovery
 )
 
-from core.agents.specialized.weather import (
-    WeatherAgent
+from core.agents.base import (
+    SpecializedAgent
 )
 
-from core.agents.specialized.travel import (
-    TravelAgent
+from utils.trace import (
+    write_section,
+    write_trace
 )
 
 
-def test_registry_discovers_agent_by_task():
+def test_agent_discovery():
 
-    registry = AgentRegistry()
-
-
-    registry.register(
-        CalendarAgent()
-    )
-
-    registry.register(
-        WeatherAgent()
+    write_section(
+        "AGENT DISCOVERY - RAW AGENTS"
     )
 
 
-    agents = registry.find_by_task(
+    discovery = AgentDiscovery()
+
+
+    agents = discovery.discover()
+
+
+    write_trace(
+        "DISCOVERED AGENT OBJECTS",
+        {
+            "agents": [
+                {
+                    "class": agent.__class__.__name__,
+                    "module": agent.__class__.__module__,
+                    "object_type": str(
+                        type(agent)
+                    ),
+                    "metadata": str(
+                        agent.metadata
+                    )
+                }
+                for agent in agents
+            ]
+        }
+    )
+
+
+    assert len(
+        agents
+    ) > 0
+
+
+    assert all(
+        isinstance(
+            agent,
+            SpecializedAgent
+        )
+        for agent in agents
+    )
+
+
+def test_discovered_agent_support_tasks():
+
+    discovery = AgentDiscovery()
+
+
+    agents = discovery.discover()
+
+
+    calendar = next(
+        agent
+        for agent in agents
+        if agent.metadata.name == "calendar"
+    )
+
+
+    assert (
         "create_event"
-    )
-
-
-    assert len(agents) == 1
-
-    assert (
-        agents[0].metadata.name
-        == "calendar"
-    )
-
-    assert (
-        "create_event"
-        in agents[0].metadata.supported_tasks
-    )
-
-def test_registry_discovers_multiple_domains():
-
-    registry = AgentRegistry()
-
-    registry.register(
-        CalendarAgent()
-    )
-
-    registry.register(
-        WeatherAgent()
-    )
-
-    registry.register(
-        TravelAgent()
-    )
-
-
-    weather_agents = registry.find_by_task(
-        "get_weather"
-    )
-
-
-    assert len(weather_agents) == 1
-
-    assert (
-        weather_agents[0].metadata.domain
-        == "weather"
+        in calendar.metadata.supported_tasks
     )

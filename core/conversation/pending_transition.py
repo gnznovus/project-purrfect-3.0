@@ -11,3 +11,5 @@ class PendingTransition:
     target_mode: ConversationMode
 
     reason: str
+
+    original_message: str | None = None

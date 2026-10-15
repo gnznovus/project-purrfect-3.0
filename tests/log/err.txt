@@ -1,5 +1,80 @@
 ================================
 TEST ERROR LOG
 ================================
-STARTED: 2026-08-01 10:34:11.177808
+STARTED: 2026-08-18 07:40:07.191497
+
+
+------------------------------
+TEST: tests/test_full_pipeline.py::test_planner_resume_after_clarification
+PHASE: call
+STATUS: FAILED
+DURATION: 0.001s
+------------------------------
+
+@pytest.mark.asyncio
+    async def test_planner_resume_after_clarification():
+    
+        user_message = (
+            "Help me organize my plans for tomorrow. "
+            "Set something up for the afternoon, "
+            "tell me if I need an umbrella, "
+            "prepare something for my weekend, "
+            "send a message to my friend about it, "
+            "and maybe find something interesting nearby."
+        )
+    
+    
+        reception = ReceptionAgent()
+    
+        reception_result = await reception.process(
+            user_message
+        )
+    
+    
+        registry = AgentRegistry()
+    
+        for agent in AgentDiscovery().discover():
+    
+            registry.register(
+                agent
+            )
+    
+    
+        secretary = IntentSecretary(
+            create_intent_extractor(),
+            CapabilitySnapshotBuilder().build(
+                registry
+            )
+        )
+    
+    
+        intent_package = await secretary.process(
+            reception_result.context
+        )
+    
+    
+        planner = PlannerAgent(
+            registry
+        )
+    
+    
+        #
+        # First planning attempt
+        #
+    
+        first_result = await planner.create_plan(
+            intent_package
+        )
+    
+    
+>       assert (
+            first_result.status
+            == "needs_clarification"
+        )
+E       AssertionError: assert 'ready' == 'needs_clarification'
+E         
+E         [0m[91m- needs_clarification[39;49;00m[90m[39;49;00m
+E         [92m+ ready[39;49;00m[90m[39;49;00m
+
+tests\test_full_pipeline.py:536: AssertionError
 

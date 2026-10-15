@@ -1,4 +1,16 @@
-from core.orchestration.models import ReceptionResult
+from core.orchestration.models import (
+    ReceptionResult
+)
+
+from core.context import (
+    RequestContext
+)
+
+from core.conversation.state import (
+    ConversationState
+)
+
+import uuid
 
 
 class ReceptionAgent:
@@ -16,9 +28,13 @@ class ReceptionAgent:
                 mode="planner",
                 requires_confirmation=True,
                 reason="complex task detected",
-                context={
-                    "user_message": message
-                }
+                context=RequestContext(
+                    request_id=str(
+                        uuid.uuid4()
+                    ),
+                    user_input=message,
+                    conversation_state=ConversationState()
+                )
             )
 
 

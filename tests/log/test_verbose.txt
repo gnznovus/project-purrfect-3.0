@@ -1,7 +1,7 @@
 ================================
 PURRFECT TEST RUN
 ================================
-STARTED: 2026-08-01 10:34:11.177808
+STARTED: 2026-08-18 07:40:07.191497
 
 
 ------------------------------
@@ -15,11 +15,32 @@ DURATION: 0.001s
 TEST: tests/test_full_pipeline.py::test_full_orchestration_pipeline_with_trace
 PHASE: call
 STATUS: PASSED
-DURATION: 0.001s
+DURATION: 0.005s
 ------------------------------
 
 ------------------------------
 TEST: tests/test_full_pipeline.py::test_full_orchestration_pipeline_with_trace
+PHASE: teardown
+STATUS: PASSED
+DURATION: 0.001s
+------------------------------
+
+------------------------------
+TEST: tests/test_full_pipeline.py::test_planner_resume_after_clarification
+PHASE: setup
+STATUS: PASSED
+DURATION: 0.001s
+------------------------------
+
+------------------------------
+TEST: tests/test_full_pipeline.py::test_planner_resume_after_clarification
+PHASE: call
+STATUS: FAILED
+DURATION: 0.001s
+------------------------------
+
+------------------------------
+TEST: tests/test_full_pipeline.py::test_planner_resume_after_clarification
 PHASE: teardown
 STATUS: PASSED
 DURATION: 0.000s

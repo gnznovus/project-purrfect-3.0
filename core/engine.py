@@ -1,6 +1,7 @@
 from .context import RequestContext
 from .result import CoreResult
 from .router import Router
+from utils.live_trace import write_live_trace
 
 
 class CoreEngine:
@@ -57,6 +58,15 @@ class CoreEngine:
             return result
 
         except Exception as error:
+            write_live_trace(
+                "CORE ERROR",
+                {
+                    "request_id": context.request_id,
+                    "error": str(error),
+                    "user_input": context.user_input
+                }
+            )
+
             return CoreResult(
                 type="error",
                 content="An internal error occurred.",

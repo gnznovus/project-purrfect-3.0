@@ -6,45 +6,137 @@ from core.agents.models import (
     AgentRequest
 )
 
+from core.execution.policy import (
+    ExecutionPolicy
+)
+
+from core.execution.models import (
+    ExecutionReport
+)
+
 
 class ExecutionEngine:
 
     def __init__(
         self,
-        registry
+        registry,
+        policy=None
     ):
         self.registry = registry
+
+        self.policy = (
+            policy
+            or ExecutionPolicy()
+        )
 
 
     async def execute(
         self,
         plan: ExecutionPlan
-    ) -> ExecutionPlan:
+    ) -> ExecutionReport:
+
+        executed_steps = {}
 
 
         for step in plan.steps:
 
-            step.status = "running"
-
-
-            agents = self.registry.find_by_task(
-                step.action
+            failed_dependency = (
+                self._get_failed_dependency(
+                    step,
+                    executed_steps
+                )
             )
 
 
-            if not agents:
+            if failed_dependency:
 
-                step.status = "failed"
+                step.status = "skipped"
 
-                step.error = (
-                    "no agent found"
+                step.reason = (
+                    f"dependency failed: {failed_dependency}"
                 )
+
+                executed_steps[
+                    step.action
+                ] = step
 
                 continue
 
 
-            agent = agents[0]
+            await self._execute_step(
+                step
+            )
 
+
+            executed_steps[
+                step.action
+            ] = step
+
+
+        return ExecutionReport(
+            steps=plan.steps,
+            success=all(
+                step.status == "completed"
+                for step in plan.steps
+            )
+        )
+
+
+    def _get_failed_dependency(
+        self,
+        step,
+        executed_steps
+    ):
+
+        for dependency in step.depends_on:
+
+            dependency_step = (
+                executed_steps.get(
+                    dependency
+                )
+            )
+
+            if (
+                dependency_step
+                and dependency_step.status != "completed"
+            ):
+                return dependency
+
+
+        return None
+
+
+    async def _execute_step(
+        self,
+        step
+    ):
+
+        step.status = "running"
+
+
+        agents = self.registry.find_by_task(
+            step.action
+        )
+
+
+        if not agents:
+
+            step.status = "failed"
+
+            step.error = (
+                "no agent found"
+            )
+
+            return
+
+
+        agent = agents[0]
+
+
+        for attempt in range(
+            1,
+            self.policy.max_attempts + 1
+        ):
 
             try:
 
@@ -60,12 +152,13 @@ class ExecutionEngine:
 
                 step.result = result
 
+                return
+
 
             except Exception as error:
 
-                step.status = "failed"
+                if attempt == self.policy.max_attempts:
 
-                step.error = str(error)
+                    step.status = "failed"
 
-
-        return plan
+                    step.error = str(error)

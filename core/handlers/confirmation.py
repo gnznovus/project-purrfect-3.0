@@ -1,8 +1,12 @@
 from ..result import CoreResult
 from ..state_update import StateUpdate, StateUpdateType
+from ..orchestration.response import ResponseBuilder
 
 
 class ConfirmationHandler:
+
+    def __init__(self):
+        self.response_builder = ResponseBuilder()
 
     async def handle(
         self,
@@ -50,5 +54,5 @@ class ConfirmationHandler:
 
         return CoreResult(
             type="response",
-            content="Please confirm or reject."
+            content=self.response_builder.build_invalid_confirmation()
         )

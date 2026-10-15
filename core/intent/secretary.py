@@ -1,3 +1,5 @@
+from core.context import RequestContext
+
 from core.intent.models import (
     Intent,
     IntentSet,
@@ -9,35 +11,71 @@ class IntentSecretary:
 
     def __init__(
         self,
-        extractor
+        extractor,
+        capability_snapshot
     ):
         self.extractor = extractor
+
+        self.available_tasks = {
+            task
+            for capability in capability_snapshot
+            for task in capability["supported_tasks"]
+        }
 
 
     async def process(
         self,
-        user_input
-    ):
+        context: RequestContext
+    ) -> RequestPackage:
 
-        result = await self.extractor.extract(
-            user_input
+        extracted = await self.extractor.extract(
+            context
         )
 
 
-        if isinstance(
-            result,
-            IntentSet
-        ):
-            intent_set = result
-
-        else:
-            intent_set = IntentSet(
-                intents=[
-                    result
-                ]
-            )
+        normalized = self.normalize(
+            extracted
+        )
 
 
         return RequestPackage(
-            intent_set=intent_set
+            intent_set=normalized,
+            context=context
+        )
+
+
+    def normalize(
+        self,
+        intent_set: IntentSet
+    ) -> IntentSet:
+
+        intents = []
+
+
+        for intent in intent_set.intents:
+
+            if intent.type not in self.available_tasks:
+
+                intents.append(
+                    Intent(
+                        type="unknown",
+                        entities=intent.entities,
+                        confidence=intent.confidence,
+                        context=(
+                            intent.context
+                            or intent.type
+                        )
+                    )
+                )
+
+                continue
+
+
+            intents.append(
+                intent
+            )
+
+
+        return IntentSet(
+            intents=intents
         )

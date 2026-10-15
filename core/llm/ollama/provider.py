@@ -1,21 +1,11 @@
-from ..models import (
+from core.llm.models import (
     LLMRequest,
     LLMResponse
 )
 
-from ..provider import LLMProvider
+from core.llm.provider import LLMProvider
 from core.llm.config import LLMConfig
-from core.config.llm import (
-    OLLAMA_MODEL,
-    LLM_TEMPERATURE,
-    LLM_TIMEOUT
-)
 
-config = LLMConfig(
-    model=OLLAMA_MODEL,
-    temperature=LLM_TEMPERATURE,
-    timeout=LLM_TIMEOUT
-)
 
 class OllamaProvider(LLMProvider):
 
@@ -33,14 +23,44 @@ class OllamaProvider(LLMProvider):
         request: LLMRequest
     ) -> LLMResponse:
 
-        response = await self.client.chat(
-            model=self.config.model,
-            messages=[
+        messages = []
+
+        if request.system_prompt:
+
+            messages.append(
                 {
-                    "role": "user",
-                    "content": request.prompt
+                    "role": "system",
+                    "content": request.system_prompt
                 }
-            ]
+            )
+
+
+        messages.append(
+            {
+                "role": "user",
+                "content": request.prompt
+            }
+        )
+
+
+        response_format = None
+
+        if request.metadata:
+            response_format = request.metadata.get(
+                "response_format"
+            )
+
+        request_options = {
+            "model": self.config.model,
+            "messages": messages,
+            "temperature": self.config.temperature
+        }
+
+        if response_format:
+            request_options["response_format"] = response_format
+
+        response = await self.client.chat(
+            **request_options
         )
 
 

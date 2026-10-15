@@ -120,13 +120,13 @@ async def test_execution_pipeline_with_trace():
     )
 
 
-    executed_plan = await engine.execute(
+    report = await engine.execute(
         plan
     )
 
 
     for index, step in enumerate(
-        executed_plan.steps,
+        report.steps,
         start=1
     ):
 
@@ -137,40 +137,41 @@ async def test_execution_pipeline_with_trace():
             )
         )
 
+    assert report.success is True
 
     assert len(
-        executed_plan.steps
+        report.steps
     ) == 3
 
 
     assert (
-        executed_plan.steps[0].status
+        report.steps[0].status
         == "completed"
     )
 
     assert (
-        executed_plan.steps[0].result.domain
+        report.steps[0].result.domain
         == "calendar"
     )
 
 
     assert (
-        executed_plan.steps[1].status
+        report.steps[1].status
         == "completed"
     )
 
     assert (
-        executed_plan.steps[1].result.domain
+        report.steps[1].result.domain
         == "weather"
     )
 
 
     assert (
-        executed_plan.steps[2].status
+        report.steps[2].status
         == "completed"
     )
 
     assert (
-        executed_plan.steps[2].result.domain
+        report.steps[2].result.domain
         == "travel"
     )
